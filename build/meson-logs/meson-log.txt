@@ -1,0 +1,51 @@
+Build started at 2018-09-25T17:51:15.288729
+Main binary: /usr/bin/python3
+Python system: Linux
+The Meson build system
+Version: 0.48.0
+Source dir: /home/svetik/vector_project
+Build dir: /home/svetik/vector_project/build
+Build type: native build
+Project name: vector_project
+Project version: 0.1.0
+Sanity testing C++ compiler: c++
+Is cross compiler: False.
+Sanity check compiler command line: c++ /home/svetik/vector_project/build/meson-private/sanitycheckcpp.cc -o /home/svetik/vector_project/build/meson-private/sanitycheckcpp.exe
+Sanity check compile stdout:
+
+-----
+Sanity check compile stderr:
+
+-----
+Running test binary command: /home/svetik/vector_project/build/meson-private/sanitycheckcpp.exe
+Native C++ compiler: c++ (gcc 5.4.0 "c++ (Ubuntu 5.4.0-6ubuntu1~16.04.10) 5.4.0 20160609")
+Build machine cpu family: x86_64
+Build machine cpu: x86_64
+src/vector_project/meson.build:4: WARNING: Passed invalid keyword argument "dependences".
+WARNING: This will become a hard error in the future.
+Build targets in project: 1
+Found ninja-1.5.1 at /usr/bin/ninja
+Running compile:
+Working directory:  /tmp/tmpf771_too
+Command line:  c++ /tmp/tmpf771_too/testfile.cpp -pipe -D_FILE_OFFSET_BITS=64 -c -o /tmp/tmpf771_too/output.obj -std=c++11 
+
+Code:
+ int i = static_cast<int>(0);
+Compiler stdout:
+ 
+Compiler stderr:
+ 
+Compiler accepts -std=c++11: YES
+Running compile:
+Working directory:  /tmp/tmpry3mjzod
+Command line:  c++ /tmp/tmpry3mjzod/testfile.cpp -pipe -D_FILE_OFFSET_BITS=64 -c -o /tmp/tmpry3mjzod/output.obj -O0 -fpermissive --print-search-dirs 
+
+Code:
+ 
+Compiler stdout:
+ install: /usr/lib/gcc/x86_64-linux-gnu/5/
+programs: =/usr/lib/gcc/x86_64-linux-gnu/5/:/usr/lib/gcc/x86_64-linux-gnu/5/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/5/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/5/../../../../x86_64-linux-gnu/bin/x86_64-linux-gnu/5/:/usr/lib/gcc/x86_64-linux-gnu/5/../../../../x86_64-linux-gnu/bin/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/5/../../../../x86_64-linux-gnu/bin/
+libraries: =/usr/lib/gcc/x86_64-linux-gnu/5/:/usr/lib/gcc/x86_64-linux-gnu/5/../../../../x86_64-linux-gnu/lib/x86_64-linux-gnu/5/:/usr/lib/gcc/x86_64-linux-gnu/5/../../../../x86_64-linux-gnu/lib/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/5/../../../../x86_64-linux-gnu/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu/5/:/usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/5/../../../../lib/:/lib/x86_64-linux-gnu/5/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/5/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/5/../../../../x86_64-linux-gnu/lib/:/usr/lib/gcc/x86_64-linux-gnu/5/../../../:/lib/:/usr/lib/
+
+Compiler stderr:
+ 

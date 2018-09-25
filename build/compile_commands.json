@@ -1,0 +1,7 @@
+[
+  {
+    "directory": "/home/svetik/vector_project/build",
+    "command": "c++ -Isrc/vector_project/src@vector_project@@vector_project@exe -Isrc/vector_project -I../src/vector_project -Isrc -I../src -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wnon-virtual-dtor -std=c++11 -g  -MD -MQ 'src/vector_project/src@vector_project@@vector_project@exe/main.cc.o' -MF 'src/vector_project/src@vector_project@@vector_project@exe/main.cc.o.d' -o 'src/vector_project/src@vector_project@@vector_project@exe/main.cc.o' -c ../src/vector_project/main.cc",
+    "file": "../src/vector_project/main.cc"
+  }
+]
