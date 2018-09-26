@@ -35,7 +35,7 @@ public:
 	T * head_ptr;
 	T * tail_ptr;
 	T * dead_end_ptr;
-	T * iterator_ptr;
+	//T * iterator_ptr;
 	//constructors: //some of them isnt right
 
 	//empty
@@ -43,34 +43,26 @@ public:
 		head_ptr = myalloc.allocate(*capacity);//link on allocator
 		tail_ptr = head_ptr;
 		dead_end_ptr=head_ptr+*capacity;//the last possible element pointer
-		iterator_ptr = head_ptr;
+		//iterator_ptr = head_ptr;
 		//now our vector is empty
 	}	
 
 	//copy
 	Vector(const Vector& existingVector) {
 		if(!*existingVector.head_ptr.empty()){
-			head_ptr= new T(*existingVector.head_ptr);
+			this.head_ptr= myalloc.allocate(*existingVector.capacity);
+			*this.capacity=*existingVector.capacity
+			T * iterator_ptr = existingVector.head_ptr;	
+			while (iterator_ptr!=existingVector.tail_ptr){
+				this.push_back(*iterator_ptr);
+				iterator_ptr++;
+			};
+			this.tail_ptr = head_ptr+existingVector.size();
+			this.dead_end_ptr=head_ptr+*existingVector.capacity;
 		}
 		else{
-			head_ptr=nullptr;
-		};
-
-		if(!*existingVector.tail_ptr.empty()){
-			tail_ptr= new T(*existingVector.tail_ptr);
-		}
-		else{
-			tail_ptr=nullptr;
-		};
-
-		if((!*existingVector.dead_end_ptr.empty())&&(!*existingVector.head_ptr.empty())){
-			dead_end_ptr=head_ptr+*capacity;
-		}
-		else{
-			dead_end_ptr=nullptr;
-		};
-
-		iterator_ptr = head_ptr;
+			this = new Vector();
+		};			
 	}
 
 	//move
@@ -80,7 +72,7 @@ public:
 		head_ptr = nullptr;
 		tail_ptr = nullptr;
 		dead_end_ptr=nullptr;
-		iterator_ptr = nullptr;
+		//iterator_ptr = nullptr;
 
 		//*head_ptr=*existingVector.head_ptr;
 		//*tail_ptr=*existingVector.tail_ptr;
@@ -88,34 +80,36 @@ public:
 		//*iterator_ptr=*existingVector.iterator_ptr;
 
 		//create new empty Vector 
-		int numOfIteratorElement=existingVector.iterator_ptr-existingVector.head_ptr;//saving an itereted cell//may be we neednt
+		//int numOfIteratorElement=existingVector.iterator_ptr-existingVector.head_ptr;//saving an itereted cell//may be we neednt
 			
-		head_ptr = myalloc.allocate(*existingVector.capacity);//this is the same Vector in new memory cells
-		tail_ptr = head_ptr+*existingVector.size();//check//old size
-		dead_end_ptr=head_ptr+*existingVector.capacity;
-		iterator_ptr = head_ptr+numOfIteratorElement;	
+		//head_ptr = myalloc.allocate(*existingVector.capacity);//this is the same Vector in new memory cells
+		//tail_ptr = head_ptr+*existingVector.size();//check//old size
+		//dead_end_ptr=head_ptr+*existingVector.capacity;
 
-		this = Vector (existingVector);//check constructors
+		//copy elements
+
+		this = new Vector(existingVector);//check constructors//copy
 
 		existingVector.head_ptr=nullptr;
 		existingVector.tail_ptr = nullptr;
 		existingVector.dead_end_ptr=nullptr;
-		existingVector.iterator_ptr = nullptr;//protection from destructor 
+		existingVector.capacity=nullptr;
+		//existingVector.iterator_ptr = nullptr;//protection from destructor 
 	}
 
 	//simple methods
 	//begin() - return iterator on the first element	
 	T * begin() const {
-		return this.iterator_ptr = this.head_ptr;
+		return this.head_ptr;
 	}
 
 	//end() - iterator on the last element
 	T * end() const {
-		return this.iterator_ptr = this.tail_ptr;
+		return this.tail_ptr-1;
 	}
 
 	//size() -num of elements in the Vector
-	int * size() const{
+	int size() const{
 		return (this.tail_ptr-this.head_ptr);
 	}
 
@@ -134,7 +128,7 @@ public:
 				* capacity = currentSize;     
 			};
 			//reallocate with move constructor
-			this = Vector(this);	//check is this not empty?
+			this = Vector(this);	//check is this not empty?//move
 		};
 		//::new ((void *)tail_ptr) T(value);//add new element to the end
 		*tail_ptr=value;//add new element to the tail
@@ -145,14 +139,24 @@ public:
 	void puch_back(){				
 		T * ptr_toDelete = tail_ptr;
 		--tail_ptr; // change position of tail_ptr on the last existing element
-		ptr_toDelete=nullptr;//delete element at the tail
+		delete ptr_toDelete;//delete element at the tail
 	}
 
 	//erase() - delete elements //look cpp 
-	void erase(){
+	//erase one element at position = num_of_pos
+	//may be SWAP?
+	void erase(int num_of_pos){
+		if(!*(this.head_ptr+num_of_pos).empty()){
+			T *iterator=this.head_ptr+num_of_pos;
+			while(iterator+1<this.tail_ptr){
+				*iterator=*(iterator+1);//check it//swap & pop back
+				iterator++;
+			};
+		}
+
 
 	}
-	//swap() in vector
+	//swap() elements in vector
 
 	//operators:
 	//operator=
@@ -162,12 +166,12 @@ public:
 	~Vector() {
 		head_ptr = nullptr;
 		tail_ptr = nullptr;
-		iterator_ptr = nullptr;
+		//iterator_ptr = nullptr;
 		//deallocate and other
 	}
 };
 
-//swap() method for STL classes
+//swap() vectors
 
 int main() {
 	//check all methods
