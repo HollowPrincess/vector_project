@@ -4,13 +4,17 @@ using namespace std;
 template <class T>
 class Allocator{
 	public:
+	//size_t size_type;
+        
 	T * pointer;
 
-	T * allocate(int num){ 
+	T * allocate(size_t num){ 
 		//allocate memory for "num" elements
 		void * pointer =0;
-		if (num==0)//nothing to do
-		else if(((T)(-1)/sizeof(T)<num)||(pointer= ::operator new(num*sizeof(T)))==0){
+		if (num==0){
+			//nothing to do
+		}
+		else if(((size_t)(-1)/sizeof(T)<num)||(pointer= ::operator new(num*sizeof(T)))==0){
 			throw bad_alloc();//didnt allocate memory	
 			//operator new is a pointer to our part of memory
 			//CHECK is this right		
@@ -18,7 +22,7 @@ class Allocator{
 		return((T)pointer);
 	}
 
-	void deallocate(T * pointer)
+	void deallocate()
     {   
         ::operator delete(pointer);
     }
@@ -27,108 +31,124 @@ class Allocator{
 
 template <class T>
 class Vector {
-protected:
-	int * capacity=100;
-	Allocator<T> * myalloc;
+//protected:
+
 	
 public:
+	size_t * capacity=100;
+	Allocator<T> * myalloc;
 	T * head_ptr;
 	T * tail_ptr;
 	T * dead_end_ptr;
-	//T * iterator_ptr;
-	//constructors: //some of them isnt right
+	//size_t size_type;
 
+	//constructors:
 	//empty
 	Vector() {
-		head_ptr = myalloc.allocate(*capacity);//link on allocator
+		head_ptr = myalloc->allocate(*capacity);//link on allocator
 		tail_ptr = head_ptr;
 		dead_end_ptr=head_ptr+*capacity;//the last possible element pointer
-		//iterator_ptr = head_ptr;
-		//now our vector is empty
 	}	
 
 	//copy
-	Vector(const Vector& existingVector) {
-		if(!*existingVector.head_ptr.empty()){
-			this.head_ptr= myalloc.allocate(*existingVector.capacity);
-			*this.capacity=*existingVector.capacity
-			T * iterator_ptr = existingVector.head_ptr;	
+	Vector(const Vector<T>& existingVector){
+		if(existingVector.head_ptr!=existingVector.tail_ptr){			
+			this->head_ptr= myalloc->allocate(*(existingVector.capacity));
+
+			*(this->capacity)=*(existingVector.capacity);
+			T * iterator_ptr = existingVector.begin();	
 			while (iterator_ptr!=existingVector.tail_ptr){
-				this.push_back(*iterator_ptr);
+				this->push_back(*iterator_ptr);
 				iterator_ptr++;
 			};
-			this.tail_ptr = head_ptr+existingVector.size();
-			this.dead_end_ptr=head_ptr+*existingVector.capacity;
+			this->tail_ptr = head_ptr+existingVector.size();
+			this->dead_end_ptr=head_ptr+*existingVector.capacity;
 		}
 		else{
-			this = new Vector();
+			head_ptr = myalloc->allocate(*capacity);//link on allocator
+			tail_ptr = head_ptr;
+			dead_end_ptr=head_ptr+*capacity;//the last possible element pointer
 		};			
 	}
 
 	//move
+	void move(Vector&& rightVector){
+		//CHECK IT
+		//may be this is not important part
+		head_ptr = nullptr;
+		tail_ptr = nullptr;
+		dead_end_ptr=nullptr;
+		capacity=nullptr;
+		myalloc=nullptr;
+
+		head_ptr=rightVector.head_ptr;
+		tail_ptr=rightVector.tail_ptr;
+		dead_end_ptr=rightVector.dead_end_ptr;
+		capacity=rightVector.capacity;
+		myalloc=rightVector.myalloc;
+
+		rightVector.head_ptr=nullptr;
+		rightVector.tail_ptr = nullptr;
+		rightVector.dead_end_ptr=nullptr;
+		rightVector.capacity=nullptr;//protection from destructor 
+	}
+
+
 	Vector(Vector&& existingVector){
 		//CHECK IT
 		//may be this is not important part
 		head_ptr = nullptr;
 		tail_ptr = nullptr;
 		dead_end_ptr=nullptr;
-		//iterator_ptr = nullptr;
+		capacity=nullptr;
+		myalloc=nullptr;
 
-		//*head_ptr=*existingVector.head_ptr;
-		//*tail_ptr=*existingVector.tail_ptr;
-		//*dead_end_ptr=*existingVector.dead_end_ptr;
-		//*iterator_ptr=*existingVector.iterator_ptr;
-
-		//create new empty Vector 
-		//int numOfIteratorElement=existingVector.iterator_ptr-existingVector.head_ptr;//saving an itereted cell//may be we neednt
-			
-		//head_ptr = myalloc.allocate(*existingVector.capacity);//this is the same Vector in new memory cells
-		//tail_ptr = head_ptr+*existingVector.size();//check//old size
-		//dead_end_ptr=head_ptr+*existingVector.capacity;
-
-		//copy elements
-
-		this = new Vector(existingVector);//check constructors//copy
+		head_ptr=existingVector.head_ptr;
+		tail_ptr=existingVector.tail_ptr;
+		dead_end_ptr=existingVector.dead_end_ptr;
+		capacity=existingVector.capacity;
+		myalloc=existingVector.myalloc;
 
 		existingVector.head_ptr=nullptr;
 		existingVector.tail_ptr = nullptr;
 		existingVector.dead_end_ptr=nullptr;
-		existingVector.capacity=nullptr;
-		//existingVector.iterator_ptr = nullptr;//protection from destructor 
+		existingVector.capacity=nullptr;//protection from destructor 
 	}
 
 	//simple methods
 	//begin() - return iterator on the first element	
 	T * begin() const {
-		return this.head_ptr;
+		return this->head_ptr;
 	}
 
-	//end() - iterator on the last element
+	//end() - iterator on the after last element
 	T * end() const {
-		return this.tail_ptr-1;
+		return this->tail_ptr;
 	}
 
-	//size() -num of elements in the Vector
-	int size() const{
-		return (this.tail_ptr-this.head_ptr);
+	//size() - num of elements in the Vector
+	size_t size() const{
+		return (this->tail_ptr-this->head_ptr);
 	}
 
 	//difficult methods:
 	//push_back(T) - add element at the tail
-	void puch_back(const T& value){
+
+	void push_back(const T& value){
 		if(tail_ptr==dead_end_ptr){			//if we havent any memory
 			* capacity=dead_end_ptr-head_ptr;//current capacity
-			int currentSize=this.size()+1;
-			if (max_size() - * capacity / 2 < * capacity) { 
+			size_t currentSize=this->size()+1;
+			//if (max_size() - * capacity / 2 < * capacity) { 
+			if(myalloc.allocate(size_t(1.5* *capacity))!=bad_alloc()){
 				//if we can take 1.5*capacity of memory
-				* capacity = int(* capacity * 1.5);  
+				* capacity = size_t(* capacity * 1.5);  
 		    };
 			if (* capacity < currentSize)  {  
 				//if we cant take 1.5*capacity of memory
 				* capacity = currentSize;     
 			};
 			//reallocate with move constructor
-			this = Vector(this);	//check is this not empty?//move
+			this = Vector<T>(this);	//check is this not empty?
 		};
 		//::new ((void *)tail_ptr) T(value);//add new element to the end
 		*tail_ptr=value;//add new element to the tail
@@ -144,34 +164,69 @@ public:
 
 	//erase() - delete elements //look cpp 
 	//erase one element at position = num_of_pos
-	//may be SWAP?
-	void erase(int num_of_pos){
+	void erase(size_t num_of_pos){
 		if(!*(this.head_ptr+num_of_pos).empty()){
 			T *iterator=this.head_ptr+num_of_pos;
 			while(iterator+1<this.tail_ptr){
-				*iterator=*(iterator+1);//check it//swap & pop back
+				*iterator=*(iterator+1);//check it
 				iterator++;
 			};
+			this.push_back();
 		}
-
-
 	}
-	//swap() elements in vector
+
+	void erase(size_t first_num, size_t last_num){
+		if(!*(this.head_ptr+first_num).empty()){
+			T *iterator=this.head_ptr+first_num;
+			while(iterator(last_num-first_num)<this.tail_ptr){
+				*iterator=*(iterator+(last_num-first_num));//check it
+				iterator++;
+			};
+			for(size_t i=0; i<(last_num-first_num);i++){
+				this.push_back();//check it
+			};
+		}
+	}
+	//swap() vectors
+	void swap(Vector<T>& rightVector){
+		Vector<T> tmp(*this);
+		this=move(rightVector);
+		rightVector=move(tmp);
+	}
+
+	friend void swap(Vector<T> &, Vector<T> &);
 
 	//operators:
 	//operator=
+	Vector<T>& operator=(const Vector<T> &&rightVector){
+		Vector<T> tmp(rightVector);
+		this.swap(tmp);
+		return *this;
+	}
 
+	Vector<T>& operator=(Vector<T> &&rightVector){
+		this->swap(rightVector);
+		return *this;
+	}
 
 	//destructor
 	~Vector() {
-		head_ptr = nullptr;
-		tail_ptr = nullptr;
-		//iterator_ptr = nullptr;
-		//deallocate and other
+		delete head_ptr;
+		delete tail_ptr;
+		delete dead_end_ptr;
+		delete capacity;
+
+		myalloc->deallocate();
+		delete myalloc;
 	}
 };
 
 //swap() vectors
+void swap(Vector<class T> &leftVector, Vector<class T> &rightVector){
+	Vector<class T> tmp(leftVector);
+	leftVector=move(rightVector);
+	rightVector=move(tmp);
+};
 
 int main() {
 	//check all methods
